@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Between Science and Legend</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink: #0a0e1a;
+      --deep: #060c18;
+      --surface: #0d1b2a;
+      --text: #c8d8e8;
+      --muted: #6a8aaa;
+      --gold: #c9a84c;
+      --gold-dim: #7a5e22;
+      --teal: #1a8a7a;
+      --danger: #8b2020;
+      --glow: rgba(26,138,122,0.18);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--deep);
+      color: var(--text);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 1.15rem;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* ─── OCEAN CANVAS ─── */
+    #ocean-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+
+    /* ─── LAYOUT ─── */
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 7rem 2rem 5rem;
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .hero-eyebrow {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      color: var(--muted);
+      letter-spacing: 0.25em;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 1.2s ease both;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2.2rem, 6vw, 4.2rem);
+      line-height: 1.15;
+      color: #e8f0f8;
+      text-shadow: 0 0 60px rgba(26,138,122,0.5), 0 2px 0 #000;
+      animation: fadeUp 1.2s 0.2s ease both;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-sub {
+      margin-top: 1.8rem;
+      font-size: 1.25rem;
+      font-style: italic;
+      color: var(--muted);
+      max-width: 560px;
+      animation: fadeUp 1.2s 0.4s ease both;
+    }
+
+    .scroll-hint {
+      margin-top: 3.5rem;
+      animation: fadeUp 1.2s 0.8s ease both, bob 2.5s 2s ease-in-out infinite;
+      color: var(--gold-dim);
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .scroll-hint::after {
+      content: '';
+      display: block;
+      margin: 0.6rem auto 0;
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gold-dim), transparent);
+    }
+
+    /* ─── INTRO ─── */
+    #intro .pull-quote {
+      font-size: 1.45rem;
+      font-style: italic;
+      color: #d0e4f4;
+      border-left: 3px solid var(--teal);
+      padding-left: 1.5rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    /* ─── SECTION HEADINGS ─── */
+    h2.chapter {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.4rem, 3.5vw, 2.1rem);
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.4rem;
+      text-shadow: 0 0 30px rgba(201,168,76,0.3);
+    }
+
+    .chapter-sub {
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 5rem 0 0;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+    }
+
+    .divider-icon {
+      color: var(--gold-dim);
+      font-size: 1.3rem;
+    }
+
+    /* ─── MYTH CARDS ─── */
+    .myth-block {
+      background: linear-gradient(135deg, rgba(13,27,42,0.9), rgba(6,12,24,0.95));
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 4px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .myth-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--teal), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .myth-block:hover {
+      border-color: rgba(201,168,76,0.3);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5), 0 0 60px var(--glow);
+    }
+
+    .myth-block:hover::before { opacity: 1; }
+
+    .myth-name {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      margin-bottom: 0.2rem;
+    }
+
+    .myth-origin {
+      font-size: 0.85rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.2rem;
+    }
+
+    .myth-story { margin-bottom: 1.5rem; }
+
+    .science-box {
+      background: rgba(26,138,122,0.07);
+      border-left: 2px solid var(--teal);
+      padding: 1rem 1.2rem;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .science-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.4rem;
+    }
+
+    .science-box p { font-size: 1rem; color: #9ab8cc; }
+
+    /* ─── FINAL MYTH (CTHULHU — unnamed) ─── */
+    #final-myth {
+      padding-top: 2rem;
+    }
+
+    .final-block {
+      background: linear-gradient(160deg, rgba(30,5,5,0.97), rgba(6,12,24,0.98));
+      border: 1px solid rgba(139,32,32,0.35);
+      border-radius: 4px;
+      padding: 3rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .final-block::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(139,32,32,0.15), transparent 70%);
+      pointer-events: none;
+    }
+
+    .final-myth-name {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.5rem;
+      color: #b03030;
+      margin-bottom: 0.2rem;
+      text-shadow: 0 0 30px rgba(139,32,32,0.5);
+    }
+
+    .final-myth-origin {
+      font-size: 0.85rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #6a2020;
+      margin-bottom: 1.5rem;
+    }
+
+    .final-block p {
+      color: #b8a0a0;
+      margin-bottom: 1.2rem;
+    }
+
+    .final-block em {
+      color: #cc8888;
+    }
+
+    /* ─── CLOSING ─── */
+    #closing {
+      text-align: center;
+    }
+
+    .closing-quote {
+      font-size: 1.5rem;
+      font-style: italic;
+      color: #d0e4f4;
+      max-width: 620px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+
+    .closing-question {
+      color: var(--gold);
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.05em;
+      margin-top: 3rem;
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 3rem 1rem 4rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 600px) {
+      section { padding: 5rem 1.2rem 3rem; }
+      .myth-block, .final-block { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="ocean-canvas"></canvas>
+
+<!-- HERO -->
+<section id="hero">
+  <p class="hero-eyebrow">A Journey Through Oceanic Legend</p>
+  <h1>Between Science<br>and Legend</h1>
+  <p class="hero-sub">For thousands of years, people feared the ocean—not just for its depth, but for what they believed lived inside it…</p>
+  <div class="scroll-hint">Descend</div>
+</section>
+
+<!-- INTRO -->
+<section id="intro" class="reveal">
+  <div class="pull-quote">
+    "The sea is everything. It covers seven-tenths of the globe. Its breath is pure and healthy. It is an immense desert, where man is never lonely, for he feels life stirring on all sides."
+  </div>
+  <p>Long before satellites mapped the ocean floor, long before submarines dove into its trenches, humanity stared at the water's edge and filled the blank spaces with stories. These weren't lies — they were explanations. Attempts by brilliant, terrified, imaginative minds to make sense of a world that refused to be fully understood.</p>
+  <p style="margin-top:1.2rem;">What follows are four of history's most enduring sea myths — and the strange truths that may have inspired them.</p>
+</section>
+
+<!-- MYTH 1: KRAKEN -->
+<div class="divider reveal"><span class="divider-icon">⚓</span></div>
+<section class="reveal">
+  <h2 class="chapter">I. The Kraken</h2>
+  <p class="chapter-sub">Norse & Scandinavian Waters · 13th Century onward</p>
+  <div class="myth-block">
+    <div class="myth-name">The Kraken</div>
+    <div class="myth-origin">Scandinavia · Harbinger of the Deep</div>
+    <p class="myth-story">Sailors who had seen it — or claimed to — described an island that wasn't there the day before. A mass so enormous it could be mistaken for land, floating just below the surface. When it woke, it dragged ships into a whirlpool of churning water. No one who met the Kraken in open sea lived to give a second description. The creature appeared in Icelandic sagas and was catalogued with chilling matter-of-factness in the <em>Konungs skuggsjá</em>, the 13th-century Norwegian royal handbook — as if it were simply a known hazard, like fog or shoals.</p>
+    <div class="science-box">
+      <div class="science-label">The Science Behind It</div>
+      <p>The giant squid (<em>Architeuthis dux</em>) can grow to 13 metres and lives in deep cold waters of the North Atlantic. For centuries it was theoretical — known only from tentacle fragments found in whale stomachs. The first confirmed photograph wasn't taken until 2004. Sailors weren't imagining things.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MYTH 2: SIRENS -->
+<div class="divider reveal"><span class="divider-icon">🎵</span></div>
+<section class="reveal">
+  <h2 class="chapter">II. The Sirens</h2>
+  <p class="chapter-sub">Ancient Greece · Homer's Odyssey, ~8th Century BC</p>
+  <div class="myth-block">
+    <div class="myth-name">The Sirens</div>
+    <div class="myth-origin">Mediterranean · Voices That Unmade Men</div>
+    <p class="myth-story">Homer described them waiting on a rocky island, their voices carrying impossible music across the water. Ships steered toward the sound and wrecked. Odysseus had his crew plug their ears with wax and lash him to the mast — the only man allowed to hear and survive. In the original myth they weren't fish-tailed beauties. They were bird-women: feathered, fierce, and deeply strange. The mermaid image came later, a cultural remix that softened the horror into something more familiar.</p>
+    <div class="science-box">
+      <div class="science-label">The Science Behind It</div>
+      <p>Sailors returning from months at sea reported seeing mermaids with startling regularity. Columbus noted them in his log, writing they were "not half as beautiful as they are painted." The leading explanation: West Indian manatees. These large, slow mammals surface to breathe, nurse their young in their arms, and call out in low, mournful tones. To a desperate, sun-bleached sailor — plausible enough.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MYTH 3: ATLANTIS -->
+<div class="divider reveal"><span class="divider-icon">🌊</span></div>
+<section class="reveal">
+  <h2 class="chapter">III. Atlantis</h2>
+  <p class="chapter-sub">Ancient Greece · Plato, ~360 BC</p>
+  <div class="myth-block">
+    <div class="myth-name">Atlantis</div>
+    <div class="myth-origin">Beyond the Pillars of Hercules · A Civilisation the Sea Swallowed</div>
+    <p class="myth-story">Plato described it precisely: a naval empire larger than Libya and Asia combined, with circular harbors, golden temples, and a people who grew rich and then corrupt. The gods, displeased, sank it beneath the Atlantic in a single catastrophic day and night. No trace remained. Scholars have debated for two millennia whether Plato invented Atlantis as a philosophical parable or recorded a distorted memory of something real. The debate still runs, often fiercely, through academic journals.</p>
+    <div class="science-box">
+      <div class="science-label">The Science Behind It</div>
+      <p>The Minoan civilization on the island of Thera (modern Santorini) was among the most advanced Bronze Age cultures in the Mediterranean. Around 1600 BC, a volcanic eruption of extraordinary violence destroyed much of the island and sent tsunamis across the sea. Archaeological evidence suggests coastal Minoan settlements vanished almost overnight. Plato wrote roughly 1,200 years after this event — long enough for memory to blur into legend.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MYTH 4: LEVIATHAN -->
+<div class="divider reveal"><span class="divider-icon">✦</span></div>
+<section class="reveal">
+  <h2 class="chapter">IV. The Leviathan</h2>
+  <p class="chapter-sub">Ancient Near East · Book of Job, ~6th Century BC</p>
+  <div class="myth-block">
+    <div class="myth-name">Leviathan</div>
+    <div class="myth-origin">Primordial Waters · The Chaos That Preceded the World</div>
+    <p class="myth-story">The Book of Job asks: <em>"Can you draw out Leviathan with a fishhook?"</em> The question is rhetorical. God is making a point about scale. The Leviathan breathes fire, its scales are shields locked together, it churns the deep like a boiling pot. In older Canaanite texts it appears as Lotan — a seven-headed sea serpent defeated by the storm god Baal at the beginning of time. It is not simply a monster. It is the ocean itself as a conscious force: ancient, pre-human, indifferent to everything that came after.</p>
+    <div class="science-box">
+      <div class="science-label">The Science Behind It</div>
+      <p>Paleontologists have found candidates: <em>Mosasaurus</em>, <em>Pliosaurus</em>, the whale-eating <em>Livyatan melvillei</em>. But the Leviathan's deepest resonance may be geological — the ocean's real power to swallow coastlines, reshape continents, and outlast everything humanity builds upon it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL — CTHULHU (unnamed) -->
+<div class="divider reveal"><span class="divider-icon" style="color:#6a2020;">✦</span></div>
+<section id="final-myth" class="reveal">
+  <h2 class="chapter" style="color:#b03030;">V. The One With No Ancient Name</h2>
+  <p class="chapter-sub" style="color:#6a2020;">The Pacific Deep · A Story Without Origin</p>
+  <div class="final-block">
+    <div class="final-myth-name">The Sleeper in the Deep</div>
+    <div class="final-myth-origin">Below All Maps · Not Dead, But Dreaming</div>
+    <p>This one is different. Unlike the Kraken or the Sirens, it has no ancient text behind it, no Norse saga, no Greek verse. It arrived in the 20th century, in the mind of a writer who described receiving it not as an invention but as something transmitted — as if the story had been waiting to be told.</p>
+    <p>The creature lies at the bottom of the Pacific, in a sunken city of impossible geometry, in a sleep that is not quite death. It is vast — so vast that the word <em>vast</em> fails. Its form is partly octopoid, partly something with no name in any human language. It does not hunt. It does not need to. It merely <em>dreams</em>, and the dreams leak upward through miles of water and stone and darkness and enter the minds of certain people — artists, sailors, sleepers near the coast — as a low, sourceless dread. As the sense that something below the surface of ordinary life is looking at you.</p>
+    <p>Those who encounter it in these dreams do not describe its face directly. They describe the moment just before they see it — the shadow it casts, the way sound stops, the sudden understanding that human civilization is very young and very small and has been here for almost no time at all.</p>
+    <p>It is not malevolent. It does not hate us. It simply <em>is</em>, in the way the ocean is — older than any name we have given it, indifferent to whether we survive, waiting in the dark for a moment that may come in a thousand years or may have already passed.</p>
+    <p><em>The seas off the Antarctic ice shelves register sounds that have never been fully explained. Deep microphones have recorded groaning signals of enormous scale from unknown sources in the Pacific basin. Scientists call them by clinical names. But they come from below. And they come from somewhere very, very large.</em></p>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section id="closing" class="reveal">
+  <div class="closing-quote">
+    "Even today, 95% of the ocean remains unexplored. We have better maps of the surface of Mars than of our own ocean floor."
+  </div>
+  <p style="color:var(--muted); font-style:italic;">So who's to say all these myths are completely false?</p>
+  <div class="closing-question">
+    Do you think myths are just imagination — or the earliest form of science?
+  </div>
+</section>
+
+<footer>
+  <div style="margin-bottom:1.2rem; font-family:'Cinzel Decorative',serif; font-size:1rem; color:#8aaacc; letter-spacing:0.08em;">
+    Johan Kraja
+  </div>
+  <div style="margin-bottom:0.5rem;">Between Science and Legend &nbsp;·&nbsp; A Sea Mythology Project</div>
+  <div style="margin-top:1.8rem; font-size:0.78rem; color:#3a5a7a; max-width:640px; margin-left:auto; margin-right:auto; line-height:1.9;">
+    <strong style="color:#4a7a9a; letter-spacing:0.12em; text-transform:uppercase; font-size:0.72rem;">Sources &amp; Further Reading</strong><br>
+    Homer, <em>The Odyssey</em> (trans. E.V. Rieu, Penguin Classics) &nbsp;·&nbsp;
+    Plato, <em>Timaeus</em> and <em>Critias</em> (trans. R.G. Bury, Loeb Classical Library) &nbsp;·&nbsp;
+    <em>Konungs skuggsjá</em> (The King's Mirror), trans. L.M. Larson, 1917 &nbsp;·&nbsp;
+    Book of Job, Hebrew Bible &nbsp;·&nbsp;
+    National Oceanic and Atmospheric Administration (NOAA) — ocean exploration data &nbsp;·&nbsp;
+    Natural History Museum, London — giant squid research &nbsp;·&nbsp;
+    Smithsonian Ocean Portal — marine biology &amp; mythology &nbsp;·&nbsp;
+    UNESCO — Minoan civilization and Santorini eruption records
+  </div>
+</footer>
+
+<!-- AUDIO TOGGLE BUTTON -->
+<button id="audio-btn" title="Toggle ocean ambience" aria-label="Toggle music">
+  <span id="audio-icon">🔇</span>
+  <span id="audio-label">Play Ambience</span>
+</button>
+
+<style>
+  #audio-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 100;
+    background: rgba(6,12,24,0.85);
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    font-family: 'EB Garamond', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    padding: 0.6rem 1.1rem;
+    border-radius: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    backdrop-filter: blur(8px);
+    transition: border-color 0.3s, box-shadow 0.3s, color 0.3s;
+  }
+  #audio-btn:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(201,168,76,0.2);
+    color: #e8d080;
+  }
+  #audio-btn.playing {
+    border-color: var(--teal);
+    color: #5de0cc;
+    box-shadow: 0 0 20px rgba(26,138,122,0.25);
+  }
+</style>
+
+<!-- ANIMATED OCEAN CANVAS -->
+<script>
+  const canvas = document.getElementById('ocean-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const layers = [
+      { amp: 18, freq: 0.008, speed: 0.008, color: 'rgba(20,80,100,0.15)', y: 0.55 },
+      { amp: 22, freq: 0.006, speed: 0.006, color: 'rgba(10,60,90,0.12)', y: 0.62 },
+      { amp: 14, freq: 0.011, speed: 0.012, color: 'rgba(26,138,122,0.08)', y: 0.48 },
+      { amp: 30, freq: 0.004, speed: 0.004, color: 'rgba(6,20,50,0.2)', y: 0.72 },
+    ];
+    layers.forEach(l => {
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 3) {
+        const y = H * l.y + Math.sin(x * l.freq + t * l.speed * 60) * l.amp
+                          + Math.sin(x * l.freq * 1.7 + t * l.speed * 40) * l.amp * 0.4;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+      ctx.fillStyle = l.color;
+      ctx.fill();
+    });
+
+    // Occasional shimmer particles
+    if (Math.random() < 0.08) {
+      const px = Math.random() * W;
+      const py = Math.random() * H * 0.9;
+      const pg = ctx.createRadialGradient(px, py, 0, px, py, 3);
+      pg.addColorStop(0, 'rgba(200,220,255,0.4)');
+      pg.addColorStop(1, 'transparent');
+      ctx.fillStyle = pg;
+      ctx.beginPath();
+      ctx.arc(px, py, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    t += 1/60;
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // ─── EERIE OCEAN AUDIO (Web Audio API — no external files needed) ───
+  let audioCtx = null;
+  let masterGain = null;
+  let isPlaying = false;
+  const nodes = [];
+
+  function createOceanAudio() {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0.72, audioCtx.currentTime + 4);
+    masterGain.connect(audioCtx.destination);
+
+    // ── 1. Deep rumbling ocean floor drone ──
+    function makeDrone(freq, gainVal, detune = 0) {
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      osc.detune.value = detune;
+      filter.type = 'lowpass';
+      filter.frequency.value = 180;
+      filter.Q.value = 0.8;
+      g.gain.value = gainVal;
+      osc.connect(filter); filter.connect(g); g.connect(masterGain);
+      osc.start();
+      nodes.push(osc, g);
+      return osc;
+    }
+    makeDrone(28, 0.55);       // sub-bass rumble
+    makeDrone(56, 0.25, 3);    // octave up, slightly detuned
+    makeDrone(42, 0.18, -5);   // fifth, eerie clash
+
+    // ── 2. Slow LFO-modulated pad (breathing feel) ──
+    function makePad(freq, gainVal) {
+      const osc = audioCtx.createOscillator();
+      const lfo = audioCtx.createOscillator();
+      const lfoGain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+      const g = audioCtx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      lfo.type = 'sine';
+      lfo.frequency.value = 0.07 + Math.random() * 0.05; // very slow breath
+      lfoGain.gain.value = gainVal * 0.6;
+      filter.type = 'bandpass';
+      filter.frequency.value = freq * 1.8;
+      filter.Q.value = 1.4;
+      g.gain.value = gainVal;
+
+      lfo.connect(lfoGain); lfoGain.connect(g.gain);
+      osc.connect(filter); filter.connect(g); g.connect(masterGain);
+      osc.start(); lfo.start();
+      nodes.push(osc, lfo, lfoGain, g);
+    }
+    makePad(74, 0.12);    // D2-ish eerie tone
+    makePad(111, 0.08);   // A2 dissonance
+    makePad(148, 0.06);   // E3 overtone
+    makePad(185, 0.04);   // very faint high shimmer
+
+    // ── 3. Pink noise — underwater ambience ──
+    const bufferSize = audioCtx.sampleRate * 4;
+    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0;
+    for (let i = 0; i < bufferSize; i++) {
+      const white = Math.random() * 2 - 1;
+      b0 = 0.99886*b0 + white*0.0555179;
+      b1 = 0.99332*b1 + white*0.0750759;
+      b2 = 0.96900*b2 + white*0.1538520;
+      b3 = 0.86650*b3 + white*0.3104856;
+      b4 = 0.55000*b4 + white*0.5329522;
+      b5 = -0.7616*b5 - white*0.0168980;
+      data[i] = (b0+b1+b2+b3+b4+b5+white*0.5362) * 0.11;
+    }
+    const noiseSource = audioCtx.createBufferSource();
+    noiseSource.buffer = noiseBuffer;
+    noiseSource.loop = true;
+    const noiseFilter = audioCtx.createBiquadFilter();
+    noiseFilter.type = 'lowpass';
+    noiseFilter.frequency.value = 220;
+    const noiseGain = audioCtx.createGain();
+    noiseGain.gain.value = 0.18;
+    noiseSource.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(masterGain);
+    noiseSource.start();
+    nodes.push(noiseSource, noiseGain);
+
+    // ── 4. Occasional whale-song-like sweeping tones ──
+    function scheduleWhale() {
+      if (!isPlaying) return;
+      const delay = 8000 + Math.random() * 18000;
+      setTimeout(() => {
+        if (!isPlaying || !audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+        const startFreq = 80 + Math.random() * 60;
+        const endFreq   = startFreq * (Math.random() > 0.5 ? 1.6 : 0.6);
+        const dur = 4 + Math.random() * 5;
+        const now = audioCtx.currentTime;
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(startFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, now + dur);
+        filter.type = 'bandpass';
+        filter.frequency.value = 300;
+        filter.Q.value = 3;
+        g.gain.setValueAtTime(0, now);
+        g.gain.linearRampToValueAtTime(0.14, now + 0.5);
+        g.gain.linearRampToValueAtTime(0.14, now + dur - 0.8);
+        g.gain.linearRampToValueAtTime(0, now + dur);
+
+        osc.connect(filter); filter.connect(g); g.connect(masterGain);
+        osc.start(now);
+        osc.stop(now + dur + 0.1);
+        scheduleWhale();
+      }, delay);
+    }
+    scheduleWhale();
+
+    // ── 5. Distant, slow bell-like resonance ──
+    function scheduleChime() {
+      if (!isPlaying) return;
+      const delay = 12000 + Math.random() * 20000;
+      setTimeout(() => {
+        if (!isPlaying || !audioCtx) return;
+        const freq = [138, 184, 207, 246, 276][Math.floor(Math.random()*5)];
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        const now = audioCtx.currentTime;
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        g.gain.setValueAtTime(0.07, now);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 9);
+        osc.connect(g); g.connect(masterGain);
+        osc.start(now); osc.stop(now + 9.5);
+        scheduleChime();
+      }, delay);
+    }
+    scheduleChime();
+  }
+
+  function stopOceanAudio() {
+    if (!audioCtx) return;
+    masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2.5);
+    setTimeout(() => {
+      nodes.forEach(n => { try { n.disconnect(); } catch(e){} });
+      nodes.length = 0;
+      audioCtx.close();
+      audioCtx = null;
+      masterGain = null;
+    }, 3000);
+  }
+
+  const btn = document.getElementById('audio-btn');
+  const icon = document.getElementById('audio-icon');
+  const label = document.getElementById('audio-label');
+
+  btn.addEventListener('click', () => {
+    if (!isPlaying) {
+      isPlaying = true;
+      createOceanAudio();
+      btn.classList.add('playing');
+      icon.textContent = '🔊';
+      label.textContent = 'Silence';
+    } else {
+      isPlaying = false;
+      stopOceanAudio();
+      btn.classList.remove('playing');
+      icon.textContent = '🔇';
+      label.textContent = 'Play Ambience';
+    }
+  });
+</script>
+</body>
+</html>
